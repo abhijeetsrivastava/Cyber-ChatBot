@@ -5,7 +5,7 @@ This is the repository for our project Cyber-Chatbot.
 Project Description-
 For this project, we have investigated the construction of a Cyber Chatbot. A powerful chatbot that can perform menial or repetitive tasks or work along side human analysts could significantly increase the effectiveness of security analysts.
 
-Collaborators-
+Collaborators- \n
 1- Abhijeet Srivastava (abhisri@udel.edu)
 2- Anupam Basu (anupamb@udel.edu)
 
