@@ -1,5 +1,8 @@
 'use strict';
 
+const PUBLICACCESSKEY= VIRUSTOTAL.PUBLICKEYACCESS;
+const S3BUCKET= AWS.S3.BUCKET;
+
 const aws = require('aws-sdk');
 var lambda = new aws.Lambda();
 const botBuilder = require('claudia-bot-builder');
@@ -72,7 +75,7 @@ api.intercept((event) => {
     console.log("abhijeet" +question);
     const con = vt.MakePublicConnection();
     //public key for virustotal
-    con.setKey(VIRUSTOTAL.PUBLICKEYACCESS);
+    con.setKey(PUBLICACCESSKEY);
     var s="";
     let ans = 'not';
     console.log("abhijeet"+hash);
@@ -220,7 +223,7 @@ function getHashFromFile(){
         s3 = new aws.S3({apiVersion: '2006-03-01'});
     var s3param={
       //AWS S3 Bucket 
-                Bucket: AWS.S3.BUCKET,
+                Bucket: S3BUCKET,
                 Key    : file_in_s3};
 var userHash='';
 return new Promise((resolve, reject) => {

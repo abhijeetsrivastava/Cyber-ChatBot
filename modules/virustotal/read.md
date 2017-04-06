@@ -1,5 +1,5 @@
 Steps:
-1- renaming few variables/tokens in nodejsvirtualbotdelay.js
+1- renaming few variables/tokens in nodejsvirtualbotdelay.js (line 3,4)
 
 	1-VIRUSTOTAL.PUBLICKEYACCESS <br>
 		1-create an account on https://www.virustotal.com <br>
@@ -38,7 +38,8 @@ is this ok? [hit enter]
 
 sudo claudia create --api-module nodejsvirtualbotdelay --region us-east-2 --timeout 120 --allow-recursion --configure-slack-slash-command
 
-note- 1-make sure the --region is correct according to your ec2.<br>
+note- <br>
+1-make sure the --region is correct according to your ec2.<br>
 2- nodejsvirtualbotdelay is the javascript file you have mentioned in sudo npm init and is the first file called after claudia deploys the bot.<br>
 
 When you run this you need to put Slack token(of the slack application you have created) and webhook as "json"
