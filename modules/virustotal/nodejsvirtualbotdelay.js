@@ -26,7 +26,6 @@ var replyFileNotFound ="This file was not found in VirutsTotal";
 var hash=""; //global variable
 var file_data = "";
 var last_file="";
-const fs=require('fs');
 const dir="./files_uploaded";
 var files ="";
 var fullpath ="";
