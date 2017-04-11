@@ -10,6 +10,7 @@ const promiseDelay = require('promise-delay');
 const slackDelayedReply = botBuilder.slackDelayedReply;
 const vt = require('node-virustotal');
 
+//these are the types of questions a user can ask.
 var qav="av "; //according to the antivirus
 let qvirus ="virus";
 let qconfidence ="confidence";
@@ -17,6 +18,7 @@ let qreport = "report";
 let qfamily ="family";
 let qavsay="avsay"; //antivirus list that says it is a virus
 
+//these are the types of replies sent to the chatBot UI, slack
 let replynotvirus="This is not a virus";
 var replyvirus="Alert: This file is a virus according to ";
 var replyav="Alert: This file is a virus according to ";
@@ -72,14 +74,13 @@ api.intercept((event) => {
     if(hash=="") //if hash is not a part of the question get it from file
       hash=getHashFromFile();
 
-    console.log("abhijeet" +question);
     const con = vt.MakePublicConnection();
     //public key for virustotal
     con.setKey(PUBLICACCESSKEY);
     var s="";
     let ans = 'not';
-    console.log("abhijeet"+hash);
     return new Promise((resolve, reject) => {
+      //asking report from virustotal API
     con.getFileReport(hash, data => {
 	for(var key in data){
 		var val=data[key];
@@ -92,7 +93,6 @@ api.intercept((event) => {
 	}
       resolve(data);
     }, mistake => {
-        console.log(JSON.stringify(mistake));
         reject(replyFileNotFound);
       });
     })
@@ -114,7 +114,6 @@ module.exports=api;
 }
 
 function replytoquestion(str , data, qtype){
-  console.log("data"+data);
   if(qtype==qvirus){
       if(str=="")
         return replynotvirus;
@@ -125,28 +124,22 @@ function replytoquestion(str , data, qtype){
     +data["positives"]+" antivirus\nMore detail can be found here\n"+data["permalink"];
     if(qtype==qavsay)
       return replyavlist+str;
-    console.log(qtype+" abhijeet " + qtype.includes(qav));
-    console.log("0  "+qtype.split(" ")[0]);
     if(qtype.includes(qav)){
       var avname=qtype.split(" ")[1];
-      console.log(avname);
-      console.log(str.toLowerCase().includes(avname.toLowerCase()));
       if(str.toLowerCase().includes(avname.toLowerCase()))
         return replyav+avname;
       else return replynotav + avname;
     }  
     return replydontknow +" You can try checking flask slash command";
 }
-
+//returns the type of question string sent is asking
 function questiontype( sent)
 {
   var natural = require('natural'),
     tokenizer = new natural.WordPunctTokenizer();
   var corpus = ["mcafee","does","scan","confidence","malware","virus","everything","family","category","detail","antivirus","bkav","totaldefense","microWorld-escan","nprotect","cmc","cat-quickheal","alyac","malwarebytes","zillya","aegislab","thehacker","alibaba","k7gw","k7antivirus","arcabit","baidu","f-prot","symantec","eset-nod32","trendmicro-housecall","avast","clamav","kaspersky","bitdefender","nano-antivirus","superantispyware","ad-aware","emsisoft","comodo","f-secure","drweb","vipre","trendmicro","sophos","cyren","jiangmin","avira","antiy","kingsoft","microsoft","virobot","gdata","ahnlab-v3","mcafee","avware","vba32","zoner","tencent","yandex","ikarus","fortinet","avg","panda","qihoo"];
-   console.log("input:\n");
   var spellcheck = new natural.Spellcheck(corpus);
   var spelltry="Mcaffee";
-  console.log(sent);
   var sentence=tokenizer.tokenize(sent);
   var temp="";
   for (var key in sentence)
@@ -162,8 +155,6 @@ function questiontype( sent)
             sentence[key]=spell[0];
     }
   }
-  console.log("tokens:hash"+hash);
-  console.log(sentence);
   
   var isvirus=" malware virus safe open concern check ";
   var confidence= " confidence ";
@@ -176,45 +167,47 @@ function questiontype( sent)
   for (var key in sentence){
     var word=sentence[key].toLowerCase();
     if(av.toLowerCase().includes(" "+word+" ")){
-      console.log("this is av question for " + word);
       return qav+word ;
     }
     if(confidence.includes(" "+word+" ")){
-      console.log("this is a confidence question");
       return qconfidence;
     }
-    if(report.includes(" "+word+" "))reportCount++;
-    if(family.includes(" "+word+" "))familyCount++;
-    if(isvirus.includes(" "+word+" "))isvirusCount++;
-    if(avsay.includes(" "+word+" "))avsayCount++;
+    if(report.includes(" "+word+" ")){
+      reportCount++;
+    }
+    if(family.includes(" "+word+" ")){
+      familyCount++;
+    }
+    if(isvirus.includes(" "+word+" ")){
+      isvirusCount++;
+    }
+    if(avsay.includes(" "+word+" ")){
+      avsayCount++;
+    }
   }
   if(reportCount > 0) {
-    console.log("this is a report question");
     return qreport;
   }
   else if(familyCount > 0){
-    console.log("this is a family question");
     return qfamily;
   }
   else if(avsayCount>0 ){
-    console.log("this is a avsay question");
     return qavsay;
   }
   else {
-    console.log("this is a virus question");
     return qvirus;
   }
 }
+//gets the hash from the file, any alphanumeric string is a hash
 function getHashFromString(word) {
     var patt = new RegExp(/((^[0-9]+[a-z]+)|(^[a-z]+[0-9]+))+[0-9a-z]+$/i);
     var res = patt.test(word);
-
     if(res==true){
       return word; 
     }
     else return "";
 }
-
+//gets hash of the file in S3Bucket
 function getHashFromFile(){
     var file_in_s3 ="chatbot";
     var env = process.env;
@@ -230,8 +223,6 @@ return new Promise((resolve, reject) => {
         s3.getObject(s3param,function(err,data){
         if (err)
         { 
-        console.log(err);
-        console.log("\nNot found, hence aborted");
         reject("Error");
         }
         else
